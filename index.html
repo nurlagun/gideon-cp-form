@@ -1,201 +1,386 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#e6ebf3">
+  <title>Church Presentation Details</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f3f4f6; margin: 0; padding: 16px; color: #1f2937; }
-    .card { max-width: 640px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 4px 14px rgba(0,0,0,0.08); border-top: 6px solid #1e3a8a; }
-    h2 { margin: 0 0 6px; color: #1e3a8a; font-size: 21px; }
-    p.sub { margin: 0 0 14px; font-size: 13px; color: #4b5563; line-height: 1.4; }
-    .badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 99px; background: #dbeafe; color: #1e40af; margin-bottom: 16px; }
-    .badge.new { background: #fef3c7; color: #92400e; }
-    .group { margin-bottom: 14px; position: relative; }
-    label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #374151; }
-    label span.req { color: #dc2626; }
-    input, select, textarea { width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; background: #fff; }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
-    .suggestions { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; max-height: 230px; overflow-y: auto; z-index: 99; box-shadow: 0 10px 25px rgba(0,0,0,0.15); display: none; }
-    .sug-item { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #f1f5f9; }
-    .sug-item:hover { background: #eff6ff; }
-    .sug-title { font-weight: 600; font-size: 14px; color: #111827; }
-    .sug-sub { font-size: 12px; color: #6b7280; margin-top: 2px; }
-    button { width: 100%; background: #1e3a8a; color: #fff; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; }
-    button:disabled { background: #9ca3af; cursor: not-allowed; }
-    #status { margin-top: 16px; padding: 14px; border-radius: 8px; display: none; font-size: 14px; font-weight: 500; }
-    .hidden { display: none; margin-top: 8px; }
+    :root {
+      --bg: #e6ebf3;
+      --shadow-dark: #c2cada;
+      --shadow-light: #ffffff;
+      --ink: #1b2437;
+      --ink-soft: #5b667d;
+      --navy: #1e3a8a;
+      --navy-deep: #172c69;
+      --gold: #c79a3b;
+      --raised: 7px 7px 16px var(--shadow-dark), -7px -7px 16px var(--shadow-light);
+      --raised-sm: 4px 4px 9px var(--shadow-dark), -4px -4px 9px var(--shadow-light);
+      --inset: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { scroll-padding-top: 16px; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 15px;
+      line-height: 1.45;
+      padding: max(18px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom));
+    }
+
+    .app { max-width: 480px; margin: 0 auto; }
+
+    /* Header */
+    .head { display: flex; align-items: center; gap: 16px; padding: 4px 4px 18px; }
+    .emblem {
+      flex: none; width: 68px; height: 68px; border-radius: 50%;
+      background: var(--bg); box-shadow: var(--raised);
+      display: grid; place-items: center; padding: 5px;
+    }
+    .emblem img { width: 100%; height: 100%; border-radius: 50%; display: block; }
+    .head h1 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; }
+    .head p { margin: 3px 0 0; font-size: 12.5px; color: var(--ink-soft); font-weight: 500; }
+
+    .intro { margin: 0 4px 16px; font-size: 13.5px; color: var(--ink-soft); }
+
+    /* Directory status pill */
+    .badge {
+      display: flex; align-items: center; gap: 10px;
+      margin: 0 0 20px; padding: 11px 16px; border-radius: 999px;
+      background: var(--bg); box-shadow: var(--inset);
+      font-size: 12.5px; font-weight: 700; color: var(--navy);
+    }
+    .badge::before {
+      content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%;
+      background: var(--navy); box-shadow: 0 0 0 3px rgba(30,58,138,0.15);
+    }
+    .badge.new { color: #8a5a07; }
+    .badge.new::before { background: var(--gold); box-shadow: 0 0 0 3px rgba(199,154,59,0.25); }
+
+    /* Section cards */
+    .section {
+      background: var(--bg); border-radius: 26px; box-shadow: var(--raised);
+      padding: 22px 18px 8px; margin-bottom: 22px;
+    }
+    .section > h2 {
+      margin: 0 0 16px; font-size: 15px; font-weight: 800; color: var(--navy);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section > h2 i {
+      flex: none; width: 30px; height: 30px; border-radius: 10px; background: var(--bg);
+      box-shadow: var(--raised-sm); display: grid; place-items: center; font-style: normal;
+    }
+    .section > h2 svg { width: 16px; height: 16px; stroke: var(--gold); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .group { margin-bottom: 16px; position: relative; }
+    label { display: block; font-size: 12.5px; font-weight: 700; margin: 0 0 7px 6px; color: var(--ink-soft); }
+    label span.req { color: #c0392b; }
+
+    input, select, textarea {
+      width: 100%; padding: 13px 16px; border: 0; border-radius: 16px;
+      font: inherit; font-size: 15px; font-weight: 500; color: var(--ink);
+      background: var(--bg); box-shadow: var(--inset);
+      transition: box-shadow .15s ease;
+    }
+    input::placeholder, textarea::placeholder { color: #8e99ae; }
+    input:focus, select:focus, textarea:focus { outline: 2px solid var(--navy); outline-offset: 2px; }
+    select {
+      appearance: none; -webkit-appearance: none; padding-right: 42px;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--navy) 50%),
+        linear-gradient(135deg, var(--navy) 50%, transparent 50%);
+      background-position: calc(100% - 22px) 52%, calc(100% - 16px) 52%;
+      background-size: 6px 6px, 6px 6px; background-repeat: no-repeat;
+    }
+    textarea { resize: vertical; min-height: 76px; }
+    input[type="date"], input[type="time"] { min-height: 48px; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+    @media (max-width: 440px) { .row { grid-template-columns: 1fr; } }
+
+    .hidden { display: none; margin-top: 10px; }
+
+    /* Suggestions */
+    .suggestions {
+      position: absolute; top: calc(100% - 6px); left: 0; right: 0; z-index: 99; display: none;
+      max-height: 250px; overflow-y: auto; border-radius: 18px; padding: 6px;
+      background: var(--bg); box-shadow: 8px 10px 22px var(--shadow-dark), -6px -6px 16px var(--shadow-light);
+    }
+    .sug-item { padding: 11px 12px; cursor: pointer; border-radius: 12px; }
+    .sug-item:hover, .sug-item:active { background: #dbe2ee; }
+    .sug-title { font-weight: 700; font-size: 14px; color: var(--ink); }
+    .sug-sub { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+
+    /* Submit */
+    button {
+      width: 100%; border: 0; padding: 17px; border-radius: 20px; cursor: pointer;
+      font: inherit; font-size: 16px; font-weight: 800; color: #fff; letter-spacing: 0.01em;
+      background: linear-gradient(145deg, #2849a3, var(--navy-deep));
+      box-shadow: 8px 8px 18px #b3bccf, -8px -8px 18px var(--shadow-light);
+      transition: box-shadow .15s ease, transform .15s ease;
+    }
+    button:active:not(:disabled) { transform: scale(0.99); box-shadow: inset 4px 4px 10px rgba(0,0,0,0.35), inset -3px -3px 8px rgba(255,255,255,0.12); }
+    button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+    button:disabled { background: #aab3c6; box-shadow: var(--inset); color: #eef1f6; cursor: not-allowed; }
+
+    #status {
+      margin-top: 20px; padding: 16px 18px; border-radius: 20px; display: none;
+      font-size: 14px; font-weight: 600; background: var(--bg); box-shadow: var(--raised-sm);
+    }
+
+    .foot { text-align: center; margin: 22px 0 0; font-size: 12px; color: var(--ink-soft); font-weight: 600; }
+
+    /* Layout: columns stack on mobile, sit side by side on desktop */
+    .cols { display: block; }
+    .col { min-width: 0; }
+    .actions { max-width: 480px; margin: 0 auto; }
+    #status { max-width: 480px; margin-left: auto; margin-right: auto; }
+
+    /* Tablet */
+    @media (min-width: 600px) {
+      body { padding-left: 28px; padding-right: 28px; }
+      .app { max-width: 600px; }
+      .section { padding: 26px 26px 10px; }
+      .head h1 { font-size: 24px; }
+    }
+
+    /* Desktop */
+    @media (min-width: 1000px) {
+      body { padding-top: 40px; padding-bottom: 56px; font-size: 15.5px; }
+      .app { max-width: 1080px; }
+      .head { padding-bottom: 22px; gap: 20px; }
+      .emblem { width: 80px; height: 80px; }
+      .head h1 { font-size: 28px; }
+      .head p { font-size: 14px; }
+      .intro { max-width: 640px; font-size: 14.5px; margin-bottom: 20px; }
+      .badge { display: inline-flex; margin-bottom: 28px; }
+      .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; align-items: start; }
+      .section { margin-bottom: 30px; padding: 28px 28px 12px; }
+      .actions { max-width: 420px; margin-top: 4px; }
+      button:hover:not(:disabled) { transform: translateY(-1px); }
+      input:hover, select:hover, textarea:hover { box-shadow: inset 4px 4px 9px var(--shadow-dark), inset -4px -4px 9px var(--shadow-light); }
+    }
+
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>Church Presentation Details Collection Sheet</h2>
-    <p class="sub">Dearly Beloved, thank you for procuring a new Church Presentation. Type the church name below to auto-fill verified directory details, or enter a new church.</p>
+  <div class="app">
+    <header class="head">
+      <div class="emblem"><img src="data:image/png;base64,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" alt="Gideons International logo" width="128" height="128"></div>
+      <div>
+        <h1>Church Presentation Details</h1>
+        <p>Gideons International</p>
+      </div>
+    </header>
+
+    <p class="intro">Dearly Beloved, thank you for procuring a new Church Presentation. Type the church name to fill in verified directory details, or enter a new church.</p>
     <div id="dirBadge" class="badge">Loading Church Directory...</div>
 
     <form id="presForm" onsubmit="handleSubmit(event)">
-      <div class="group">
-        <label>Name of the Church <span class="req">*</span></label>
-        <input type="text" id="churchName" required autocomplete="off" placeholder="Type 2+ letters to search directory or enter new church...">
-        <div id="suggestions" class="suggestions"></div>
-      </div>
 
-      <div class="row">
+      <div class="cols">
+      <div class="col">
+      <!-- CHURCH -->
+      <section class="section">
+        <h2><i><svg viewBox="0 0 24 24"><path d="M12 3v4M10 5h4M5 21V11l7-4 7 4v10zM10 21v-5h4v5"/></svg></i>Church</h2>
+
         <div class="group">
-          <label>Camp Name <span class="req">*</span></label>
-          <select id="campName" required><option value="">Loading Camps...</option></select>
+          <label>Name of the Church <span class="req">*</span></label>
+          <input type="text" id="churchName" required autocomplete="off" placeholder="Type 2+ letters to search the directory">
+          <div id="suggestions" class="suggestions"></div>
         </div>
-        <div class="group">
-          <label>Date of Presentation <span class="req">*</span></label>
-          <input type="date" id="presDate" required>
+
+        <div class="row">
+          <div class="group">
+            <label>Camp Name <span class="req">*</span></label>
+            <select id="campName" required><option value="">Loading Camps...</option></select>
+          </div>
+          <div class="group">
+            <label>Date of Presentation <span class="req">*</span></label>
+            <input type="date" id="presDate" required>
+          </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="group">
-          <label>Denomination <span class="req">*</span></label>
-          <select id="denomination" required onchange="toggleOther('denomination', 'denomOther')">
-            <option value="CSI">CSI</option>
-            <option value="AG">AG</option>
-            <option value="Baptist">Baptist</option>
-            <option value="ECI">ECI</option>
-            <option value="Independent" selected>Independent</option>
-            <option value="Luthern">Luthern</option>
-            <option value="Methodist">Methodist</option>
-            <option value="Acts">Acts</option>
-            <option value="IPC">IPC</option>
-            <option value="Other">Other</option>
-          </select>
-          <input type="text" id="denomOther" class="hidden" placeholder="Enter Denomination">
+        <div class="row">
+          <div class="group">
+            <label>Denomination <span class="req">*</span></label>
+            <select id="denomination" required onchange="toggleOther('denomination', 'denomOther')">
+              <option value="CSI">CSI</option>
+              <option value="AG">AG</option>
+              <option value="Baptist">Baptist</option>
+              <option value="ECI">ECI</option>
+              <option value="Independent" selected>Independent</option>
+              <option value="Luthern">Luthern</option>
+              <option value="Methodist">Methodist</option>
+              <option value="Acts">Acts</option>
+              <option value="IPC">IPC</option>
+              <option value="Other">Other</option>
+            </select>
+            <input type="text" id="denomOther" class="hidden" placeholder="Enter Denomination">
+          </div>
+          <div class="group">
+            <label>Pincode <span class="req">*</span></label>
+            <input type="text" id="pincode" required inputmode="numeric" placeholder="e.g. 560066">
+          </div>
         </div>
+
         <div class="group">
-          <label>Pincode <span class="req">*</span></label>
-          <input type="text" id="pincode" required placeholder="e.g. 560066">
+          <label>Church Address <span class="req">*</span></label>
+          <input type="text" id="address" required placeholder="Street / Locality / City">
         </div>
-      </div>
 
-      <div class="group">
-        <label>Church Address <span class="req">*</span></label>
-        <input type="text" id="address" required placeholder="Street / Locality / City">
-      </div>
-      <div class="row">
-        <div class="group"><label>Church Area</label><input type="text" id="area"></div>
-        <div class="group"><label>Landmark</label><input type="text" id="landmark"></div>
-      </div>
+        <div class="row">
+          <div class="group"><label>Church Area</label><input type="text" id="area"></div>
+          <div class="group"><label>Landmark</label><input type="text" id="landmark"></div>
+        </div>
+      </section>
 
-      <div class="row">
-        <div class="group"><label>Pastor Prefix <span class="req">*</span></label><input type="text" id="pastorPrefix" value="Pastor" required></div>
-        <div class="group"><label>Pastor Name <span class="req">*</span></label><input type="text" id="pastorName" required></div>
+      <!-- PASTOR -->
+      <section class="section">
+        <h2><i><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></i>Pastor</h2>
+
+        <div class="row">
+          <div class="group"><label>Pastor Prefix <span class="req">*</span></label><input type="text" id="pastorPrefix" value="Pastor" required></div>
+          <div class="group"><label>Pastor Name <span class="req">*</span></label><input type="text" id="pastorName" required></div>
+        </div>
+
+        <div class="row">
+          <div class="group"><label>Pastor Contact Number <span class="req">*</span></label><input type="tel" id="pastorPhone" required placeholder="e.g. 9845012345"></div>
+          <div class="group"><label>Alternate Number &amp; Name</label><input type="text" id="altContact"></div>
+        </div>
+
+        <div class="group"><label>Pastor Mail ID</label><input type="email" id="pastorEmail"></div>
+      </section>
+
       </div>
+      <div class="col">
+      <!-- SERVICE -->
+      <section class="section">
+        <h2><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></i>Service</h2>
 
-      <div class="row">
-        <div class="group"><label>Pastor Contact Number <span class="req">*</span></label><input type="tel" id="pastorPhone" required placeholder="e.g. 9845012345"></div>
-        <div class="group"><label>Alternate Number & Name</label><input type="text" id="altContact"></div>
-      </div>
+        <div class="row">
+          <div class="group">
+            <label>Service Language - Primary <span class="req">*</span></label>
+            <select id="primaryLang" required>
+              <option value="Tamil">Tamil</option>
+              <option value="Kannada">Kannada</option>
+              <option value="English" selected>English</option>
+              <option value="Telugu">Telugu</option>
+              <option value="Malayalam">Malayalam</option>
+              <option value="Hindi">Hindi</option>
+              <option value="Nepali">Nepali</option>
+            </select>
+          </div>
+          <div class="group">
+            <label>Translation Available</label>
+            <select id="translationAvail"><option value="No">No</option><option value="Yes">Yes</option></select>
+          </div>
+        </div>
 
-      <div class="group"><label>Pastor Mail ID</label><input type="email" id="pastorEmail"></div>
-
-      <div class="row">
         <div class="group">
-          <label>Service Language - Primary <span class="req">*</span></label>
-          <select id="primaryLang" required>
-            <option value="Tamil">Tamil</option>
+          <label>Service Language - Secondary</label>
+          <select id="secondaryLang">
+            <option value="">None</option>
             <option value="Kannada">Kannada</option>
-            <option value="English" selected>English</option>
+            <option value="Tamil">Tamil</option>
+            <option value="English">English</option>
             <option value="Telugu">Telugu</option>
             <option value="Malayalam">Malayalam</option>
             <option value="Hindi">Hindi</option>
-            <option value="Nepali">Nepali</option>
           </select>
         </div>
-        <div class="group">
-          <label>Translation Available</label>
-          <select id="translationAvail"><option value="No">No</option><option value="Yes">Yes</option></select>
+
+        <div class="row">
+          <div class="group"><label>Service Start Time <span class="req">*</span></label><input type="time" id="startTime" value="10:00" required></div>
+          <div class="group"><label>Service End Time <span class="req">*</span></label><input type="time" id="endTime" value="12:00" required></div>
         </div>
-      </div>
 
-      <div class="group">
-        <label>Service Language - Secondary</label>
-        <select id="secondaryLang">
-          <option value="">None</option>
-          <option value="Kannada">Kannada</option>
-          <option value="Tamil">Tamil</option>
-          <option value="English">English</option>
-          <option value="Telugu">Telugu</option>
-          <option value="Malayalam">Malayalam</option>
-          <option value="Hindi">Hindi</option>
-        </select>
-      </div>
-
-      <div class="row">
-        <div class="group"><label>Service Start Time <span class="req">*</span></label><input type="time" id="startTime" value="10:00" required></div>
-        <div class="group"><label>Service End Time <span class="req">*</span></label><input type="time" id="endTime" value="12:00" required></div>
-      </div>
-
-      <div class="row">
-        <div class="group"><label>LCD Projector</label><select id="lcdProjector"><option value="Yes">Yes</option><option value="No">No</option></select></div>
-        <div class="group"><label>Sermon Required <span class="req">*</span></label><select id="sermonRequired" required><option value="Yes">Yes</option><option value="No">No</option></select></div>
-      </div>
-
-      <div class="row">
-        <div class="group"><label>Duration for Sermon & Presentation <span class="req">*</span></label><input type="text" id="duration" value="40 mins" required></div>
-        <div class="group">
-          <label>Offering Type <span class="req">*</span></label>
-          <select id="offeringType" required>
-            <option value="Main Offering">Main Offering</option>
-            <option value="Retiring Offering">Retiring Offering</option>
-            <option value="No Offering">No Offering</option>
-          </select>
+        <div class="row">
+          <div class="group"><label>LCD Projector</label><select id="lcdProjector"><option value="Yes">Yes</option><option value="No">No</option></select></div>
+          <div class="group"><label>Sermon Required <span class="req">*</span></label><select id="sermonRequired" required><option value="Yes">Yes</option><option value="No">No</option></select></div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="group"><label>Congregation Size <span class="req">*</span></label><input type="number" id="congregationSize" value="100" required></div>
-        <div class="group"><label>Expected Offering</label><input type="number" id="expectedOffering"></div>
-      </div>
+        <div class="row">
+          <div class="group"><label>Duration for Sermon &amp; Presentation <span class="req">*</span></label><input type="text" id="duration" value="40 mins" required></div>
+          <div class="group">
+            <label>Offering Type <span class="req">*</span></label>
+            <select id="offeringType" required>
+              <option value="Main Offering">Main Offering</option>
+              <option value="Retiring Offering">Retiring Offering</option>
+              <option value="No Offering">No Offering</option>
+            </select>
+          </div>
+        </div>
 
-      <div class="row">
+        <div class="row">
+          <div class="group"><label>Congregation Size <span class="req">*</span></label><input type="number" id="congregationSize" value="100" required inputmode="numeric"></div>
+          <div class="group"><label>Expected Offering</label><input type="number" id="expectedOffering" inputmode="numeric"></div>
+        </div>
+      </section>
+
+      <!-- PROCUREMENT -->
+      <section class="section">
+        <h2><i><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></i>Procurement</h2>
+
+        <div class="row">
+          <div class="group">
+            <label>CP Procured By <span class="req">*</span></label>
+            <select id="procuredBy" required onchange="toggleOther('procuredBy', 'procuredOther')">
+              <option value="Anand Katawati">Anand Katawati</option>
+              <option value="Jason Paul">Jason Paul</option>
+              <option value="Anthony David">Anthony David</option>
+              <option value="Aniyappan Achari">Aniyappan Achari</option>
+              <option value="Roger Milton">Roger Milton</option>
+              <option value="Joel Blesson">Joel Blesson</option>
+              <option value="Baskaran DWP">Baskaran DWP</option>
+              <option value="Ashok Kumar">Ashok Kumar</option>
+              <option value="Other">Other</option>
+            </select>
+            <input type="text" id="procuredOther" class="hidden" placeholder="Enter Brother Name">
+          </div>
+          <div class="group">
+            <label>CP Procured By Contact <span class="req">*</span></label>
+            <input type="tel" id="procuredByContact" required placeholder="e.g. 9845012345">
+          </div>
+        </div>
+
         <div class="group">
-          <label>CP Procured By <span class="req">*</span></label>
-          <select id="procuredBy" required onchange="toggleOther('procuredBy', 'procuredOther')">
-            <option value="Anand Katawati">Anand Katawati</option>
-            <option value="Jason Paul">Jason Paul</option>
-            <option value="Anthony David">Anthony David</option>
-            <option value="Aniyappan Achari">Aniyappan Achari</option>
-            <option value="Roger Milton">Roger Milton</option>
-            <option value="Joel Blesson">Joel Blesson</option>
-            <option value="Baskaran DWP">Baskaran DWP</option>
-            <option value="Ashok Kumar">Ashok Kumar</option>
+          <label>Mode of Procurement</label>
+          <select id="procurementMode" onchange="toggleOther('procurementMode', 'modeOther')">
+            <option value="In Person Metting with Pastor">In Person Metting with Pastor</option>
+            <option value="Over Telephonic Conversation with pastor">Over Telephonic Conversation with pastor</option>
+            <option value="Through Friend">Through Friend</option>
+            <option value="Through Google Searcch">Through Google Searcch</option>
+            <option value="Through PAB contact">Through PAB contact</option>
             <option value="Other">Other</option>
           </select>
-          <input type="text" id="procuredOther" class="hidden" placeholder="Enter Brother Name">
+          <input type="text" id="modeOther" class="hidden" placeholder="Enter Mode of Procurement">
         </div>
-        <div class="group">
-          <label>CP Procured By Contact <span class="req">*</span></label>
-          <input type="tel" id="procuredByContact" required placeholder="e.g. 9845012345">
-        </div>
+
+        <div class="group"><label>Comments</label><textarea id="comments" rows="2"></textarea></div>
+      </section>
+
+      </div>
       </div>
 
-      <div class="group">
-        <label>Mode of Procurement</label>
-        <select id="procurementMode" onchange="toggleOther('procurementMode', 'modeOther')">
-          <option value="In Person Metting with Pastor">In Person Metting with Pastor</option>
-          <option value="Over Telephonic Conversation with pastor">Over Telephonic Conversation with pastor</option>
-          <option value="Through Friend">Through Friend</option>
-          <option value="Through Google Searcch">Through Google Searcch</option>
-          <option value="Through PAB contact">Through PAB contact</option>
-          <option value="Other">Other</option>
-        </select>
-        <input type="text" id="modeOther" class="hidden" placeholder="Enter Mode of Procurement">
-      </div>
-
-      <div class="group"><label>Comments</label><textarea id="comments" rows="2"></textarea></div>
-
+      <div class="actions">
       <button type="submit" id="submitBtn">Submit Church Presentation</button>
+      </div>
     </form>
-    <div id="status"></div>
+
+    <div id="status" role="status" aria-live="polite"></div>
+    <p class="foot">Gideons International</p>
   </div>
-    <script>
+
+  <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxuJtvSgKGRfmZQyBZftKY78mjT8pXMBsBQEeNOd9lq_oTXBWyawIu2Q6TKV1-U6Dqe/exec";
     let directory = [];
     const badge = document.getElementById('dirBadge');
@@ -336,20 +521,22 @@
         .then(res => {
           if (!res.ok) throw new Error(res.error || "Submission failed");
           st.style.display = 'block';
-          st.style.background = '#dcfce7';
-          st.style.color = '#166534';
+          st.style.background = '#e3f3e8';
+          st.style.color = '#14633a';
           st.textContent = `Submitted! Booking ID: ${res.id} (Row ${res.row}). Stage 0 WhatsApp alerts triggered.`;
           btn.disabled = false;
           btn.textContent = 'Submit Another Request';
           document.getElementById('presForm').reset();
+          st.scrollIntoView({ behavior: 'smooth', block: 'center' });
         })
         .catch(err => {
           st.style.display = 'block';
-          st.style.background = '#fee2e2';
-          st.style.color = '#991b1b';
+          st.style.background = '#fbe6e6';
+          st.style.color = '#9b1c1c';
           st.textContent = 'Error: ' + err.message;
           btn.disabled = false;
           btn.textContent = 'Submit Church Presentation';
+          st.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
     }
   </script>
