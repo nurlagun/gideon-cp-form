@@ -670,22 +670,8 @@
       return v === 'Other' ? document.getElementById(otherId).value : v;
     }
 
-    // Duplicate-submission guard:
-    //  - `submitting` blocks a second submit while one is in flight
-    //  - `pendingId` is a unique ID for this booking. It is kept until the server
-    //    confirms success, so any retry (automatic or by the user) carries the
-    //    SAME ID and the server can ignore it instead of adding a new row.
-    let submitting = false;
-    let pendingId = null;
-    const newId = () => (window.crypto && crypto.randomUUID)
-      ? crypto.randomUUID()
-      : Date.now().toString(36) + Math.random().toString(36).slice(2);
-
     function handleSubmit(e) {
       e.preventDefault();
-      if (submitting) return;
-      submitting = true;
-      if (!pendingId) pendingId = newId();
       const btn = document.getElementById('submitBtn');
       const st = document.getElementById('status');
       btn.disabled = true;
@@ -725,23 +711,14 @@
         procuredBy: getValOrOther('procuredBy', 'procuredOther'),
         procuredByContact: norm91(document.getElementById('procuredByContact').value),
         procurementMode: getValOrOther('procurementMode', 'modeOther'),
-        comments: document.getElementById('comments').value,
-        submissionId: pendingId
+        comments: document.getElementById('comments').value
       };
+      const submitUrl = API_URL + "?action=submit&data=" + encodeURIComponent(JSON.stringify(payload));
 
-      // POST instead of GET: browsers treat GET as "safe to repeat" and may
-      // silently re-send it when the connection drops (e.g. tab backgrounded).
-      // text/plain avoids a CORS preflight, which Apps Script doesn't support.
-      fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'submit', data: payload })
-      })
+      fetch(submitUrl)
         .then(r => r.json())
         .then(res => {
           if (!res.ok) throw new Error(res.error || "Submission failed");
-          submitting = false;
-          pendingId = null; // this booking is done; next one gets a fresh ID
           st.style.display = 'block';
           st.className = 'ok';
           st.textContent = `Submitted! Booking ID: ${res.id} (Row ${res.row}). Stage 0 WhatsApp alerts triggered.`;
@@ -751,12 +728,9 @@
           st.scrollIntoView({ behavior: 'smooth', block: 'center' });
         })
         .catch(err => {
-          submitting = false; // pendingId is kept, so resubmitting is safe
           st.style.display = 'block';
           st.className = 'err';
-          st.textContent = (err instanceof TypeError)
-            ? 'Connection was interrupted. Your request may already be saved — tapping Submit again is safe and will not create a duplicate.'
-            : 'Error: ' + err.message;
+          st.textContent = 'Error: ' + err.message;
           btn.disabled = false;
           btn.textContent = 'Submit Church Presentation';
           st.scrollIntoView({ behavior: 'smooth', block: 'center' });
